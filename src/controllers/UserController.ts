@@ -28,7 +28,8 @@ export class UsersController {
           .status(400)
           .json({ error: 'Os dados enviados são incorretos!' });
     } catch (error) {
-      throw error;
+      console.error(error.stack);
+      return res.status(500).json({ message: 'Erro inesperado!' });
     }
   }
 
@@ -44,7 +45,8 @@ export class UsersController {
           [query.skip, query.take],
           (error, result) => {
             if (error) {
-              throw error;
+              console.error(error.stack);
+              return res.status(500).json({ message: 'Erro inesperado!' });
             }
 
             const data = (result.rows as any[]).map((user) => {
@@ -60,7 +62,8 @@ export class UsersController {
       } else {
         db.query('SELECT * FROM tb_user;', (error, result) => {
           if (error) {
-            throw error;
+            console.error(error.stack);
+            return res.status(500).json({ message: 'Erro inesperado!' });
           }
 
           const data = (result.rows as any[]).map((user) => {
@@ -74,7 +77,8 @@ export class UsersController {
         });
       }
     } catch (error) {
-      throw error;
+      console.error(error.stack);
+      return res.status(500).json({ message: 'Erro inesperado!' });
     }
   }
 
@@ -91,7 +95,8 @@ export class UsersController {
           [name, email, password, id],
           (error, result) => {
             if (error) {
-              throw error;
+              console.error(error.stack);
+              return res.status(500).json({ message: 'Erro inesperado!' });
             }
 
             res.status(200).json({ ok: true });
@@ -102,7 +107,8 @@ export class UsersController {
           .status(400)
           .json({ error: 'Os dados enviados são incorretos!' });
     } catch (error) {
-      throw error;
+      console.error(error.stack);
+      return res.status(500).json({ message: 'Erro inesperado!' });
     }
   }
 
@@ -114,7 +120,8 @@ export class UsersController {
     if (id)
       db.query('DELETE FROM tb_user WHERE id = $1;', [id], (error, result) => {
         if (error) {
-          throw error;
+          console.error(error.stack);
+          return res.status(500).json({ message: 'Erro inesperado!' });
         }
 
         res.status(200).json({ ok: true });

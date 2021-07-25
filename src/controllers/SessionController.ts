@@ -24,7 +24,9 @@ export default class SessionController {
         const checkPassword = await compare(password, user?.password || '');
 
         if (!user || !checkPassword) {
-          return res.status(400).json({ message: 'Email ou Senha incorreto!' });
+          return res
+            .status(400)
+            .json({ message: 'Os dados enviados são incorretos!' });
         }
 
         const token = sign({ userId: user?.id }, authConfig.secret as string, {
