@@ -1,0 +1,520 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Gallerz API",
+    "description": "API com o objetivo de manipular produtos e pedidos da aplicação.",
+    "contact": {
+      "name": "API Support",
+      "url": "https:/github.com/sambuite",
+      "email": "murilo.sambuite082@academico.ifs.edu.br"
+    },
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:3333",
+      "description": "API principal"
+    }
+  ],
+  "tags": [
+    {
+      "name": "User",
+      "description": "Rotas que interagem com a tabela de Usuário "
+    },
+    {
+      "name": "Product",
+      "description": "Rotas que interagem com a tabela de Produto "
+    },
+    {
+      "name": "Order",
+      "description": "Rotas que interagem com a tabela de Pedido "
+    },
+    {
+      "name": "ProductOrder",
+      "description": "Rotas que interagem com a tabela de ProdutoPedido "
+    }
+  ],
+  "paths": {
+    "/login": {
+      "post": {
+        "tags": ["User"],
+        "summary": "Login do usuário",
+        "description": "Essa rota será responsável por realizar o login do usuário.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "$ref": "#/components/schemas/Login"
+              },
+              "examples": {
+                "login": {
+                  "value": {
+                    "email": "jorge@gmail.com",
+                    "password": "123456"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "400": {
+            "description": "Os dados enviados são incorretos!"
+          },
+          "500": {
+            "description": "Erro inesperado!"
+          },
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "$ref": "#/components/schemas/Auth"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/register-user": {
+      "post": {
+        "tags": ["User"],
+        "summary": "Cadastro do usuário",
+        "description": "Essa rota será responsável por realizar o cadastro do usuário.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "$ref": "#/components/schemas/User"
+              },
+              "examples": {
+                "user": {
+                  "value": {
+                    "name": "Jorge Abreu",
+                    "email": "jorge@gmail.com",
+                    "password": "123456"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "400": {
+            "description": "Os dados enviados são incorretos!"
+          },
+          "500": {
+            "description": "Erro inesperado!"
+          },
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "$ref": "#/components/schemas/Success"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/users": {
+      "get": {
+        "tags": ["User"],
+        "summary": "Listagem do usuário",
+        "description": "Essa rota será responsável por listar usuários.",
+        "security": [{ "bearerAuth": [] }],
+        "responses": {
+          "401": {
+            "description": "Token não fornecido."
+          },
+          "500": {
+            "description": "Erro inesperado!"
+          },
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "$ref": "#/components/schemas/User"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/edit-user/:id": {
+      "put": {
+        "tags": ["User"],
+        "summary": "Edita um usuário",
+        "description": "Essa rota será responsável por editar um usuário.",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID do usuário",
+            "required": true,
+            "type": "integer",
+            "format": "int64"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "$ref": "#/components/schemas/User"
+              },
+              "examples": {
+                "register": {
+                  "value": {
+                    "name": "Jorge Abreu 2",
+                    "email": "jorge2@gmail.com",
+                    "password": "123456"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "400": {
+            "description": "Os dados enviados são incorretos!"
+          },
+          "401": {
+            "description": "Token não fornecido."
+          },
+          "500": {
+            "description": "Erro inesperado!"
+          },
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "$ref": "#/components/schemas/Success"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/delete-user/:id": {
+      "delete": {
+        "tags": ["User"],
+        "summary": "Deleta um usuário",
+        "description": "Essa rota será responsável por deletar um usuário.",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID do usuário",
+            "required": true,
+            "type": "integer",
+            "format": "int64"
+          }
+        ],
+        "responses": {
+          "400": {
+            "description": "Os dados enviados são incorretos!"
+          },
+          "401": {
+            "description": "Token não fornecido."
+          },
+          "500": {
+            "description": "Erro inesperado!"
+          },
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "$ref": "#/components/schemas/Success"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/register-product": {
+      "post": {
+        "tags": ["Product"],
+        "summary": "Cadastro de produto",
+        "description": "Essa rota será responsável por realizar o cadastro de produto.",
+        "security": [{ "bearerAuth": [] }],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "$ref": "#/components/schemas/Product"
+              },
+              "examples": {
+                "product": {
+                  "value": {
+                    "name": "Produto 00",
+                    "imageUrl": "https://images.unsplash.com/photo-1579762715118-a6f1d4b934f1?fit=crop&w=331&q=80",
+                    "price": 25.5,
+                    "userId": 1
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "401": {
+            "description": "Token não fornecido."
+          },
+          "400": {
+            "description": "Os dados enviados são incorretos!"
+          },
+          "500": {
+            "description": "Erro inesperado!"
+          },
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "$ref": "#/components/schemas/Success"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/products": {
+      "get": {
+        "tags": ["Product"],
+        "summary": "Listagem de produtos",
+        "description": "Essa rota será responsável por listar produtos.",
+        "security": [{ "bearerAuth": [] }],
+        "responses": {
+          "401": {
+            "description": "Token não fornecido."
+          },
+          "500": {
+            "description": "Erro inesperado!"
+          },
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "$ref": "#/components/schemas/Product"
+                  }
+                },
+                "examples": {
+                  "product": {
+                    "value": [
+                      {
+                        "name": "Produto 00",
+                        "imageUrl": "https://images.unsplash.com/photo-1579762715118-a6f1d4b934f1?fit=crop&w=331&q=80",
+                        "price": 25.5,
+                        "userId": 1
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/edit-product/:id": {
+      "put": {
+        "tags": ["Product"],
+        "summary": "Edita um produto",
+        "description": "Essa rota será responsável por editar um produto.",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID do produto",
+            "required": true,
+            "type": "integer",
+            "format": "int64"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "$ref": "#/components/schemas/Product"
+              },
+              "examples": {
+                "product": {
+                  "value": {
+                    "name": "Produto 01",
+                    "imageUrl": "https://images.unsplash.com/photo-1579762715118-a6f1d4b934f1?fit=crop&w=331&q=80",
+                    "price": 20.5
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "400": {
+            "description": "Os dados enviados são incorretos!"
+          },
+          "401": {
+            "description": "Token não fornecido."
+          },
+          "500": {
+            "description": "Erro inesperado!"
+          },
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "$ref": "#/components/schemas/Success"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/delete-product/:id": {
+      "delete": {
+        "tags": ["Product"],
+        "summary": "Deleta um produto",
+        "description": "Essa rota será responsável por deletar um produto.",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID do produto",
+            "required": true,
+            "type": "integer",
+            "format": "int64"
+          }
+        ],
+        "responses": {
+          "400": {
+            "description": "Os dados enviados são incorretos!"
+          },
+          "401": {
+            "description": "Token não fornecido."
+          },
+          "500": {
+            "description": "Erro inesperado!"
+          },
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "$ref": "#/components/schemas/Success"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "User": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "password": {
+            "type": "string"
+          }
+        }
+      },
+      "Product": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "imageUrl": {
+            "type": "string"
+          },
+          "price": {
+            "type": "number"
+          },
+          "userId": {
+            "type": "number"
+          }
+        }
+      },
+      "Login": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string"
+          },
+          "password": {
+            "type": "string"
+          }
+        }
+      },
+      "Auth": {
+        "type": "object",
+        "properties": {
+          "userId": {
+            "type": "string"
+          },
+          "token": {
+            "type": "string"
+          }
+        }
+      },
+      "Success": {
+        "type": "object",
+        "properties": {
+          "ok": {
+            "type": "boolean"
+          }
+        }
+      }
+    },
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    }
+  }
+}
