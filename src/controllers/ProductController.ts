@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import pool from '@database/connection';
-import { QueryResult } from 'pg';
+import { v4 as uuid } from 'uuid';
 
 export class ProductController {
   async create(req: Request, res: Response) {
@@ -26,10 +26,12 @@ export class ProductController {
         },
       );
 
-      if (name && imageUrl && price && userId)
+      if (name && imageUrl && price && userId) {
+        const id = uuid();
+
         db.query(
-          `INSERT INTO tb_product(tb_user_id, name, image_url, price) VALUES($1, $2, $3, $4);`,
-          [userId, name, imageUrl, price],
+          `INSERT INTO tb_product(id, tb_user_id, name, image_url, price) VALUES($1, $2, $3, $4, $5);`,
+          [id, userId, name, imageUrl, price],
           (error, result) => {
             if (error) {
               console.error(error.stack);
@@ -39,7 +41,7 @@ export class ProductController {
             return res.status(200).json({ ok: true });
           },
         );
-      else
+      } else
         return res
           .status(400)
           .json({ error: 'Os dados enviados são incorretos!' });

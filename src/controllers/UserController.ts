@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import pool from '@database/connection';
 import { hash } from 'bcryptjs';
+import { v4 as uuid } from 'uuid';
 
 export class UsersController {
   async create(req: Request, res: Response) {
@@ -10,10 +11,12 @@ export class UsersController {
 
     try {
       const hashedPassword = await hash(password, 8);
-      if (name && email && password && hashedPassword)
+      if (name && email && password && hashedPassword) {
+        const id = uuid();
+
         db.query(
-          `INSERT INTO tb_user(name, email, password) VALUES($1, $2, $3);`,
-          [name, email, hashedPassword],
+          `INSERT INTO tb_user(id, name, email, password) VALUES($1, $2, $3, $4);`,
+          [id, name, email, hashedPassword],
           (error, result) => {
             if (error) {
               console.error(error.stack);
@@ -23,7 +26,7 @@ export class UsersController {
             return res.status(200).json({ ok: true });
           },
         );
-      else
+      } else
         return res
           .status(400)
           .json({ error: 'Os dados enviados são incorretos!' });
