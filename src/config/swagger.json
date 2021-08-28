@@ -28,10 +28,6 @@
     {
       "name": "Order",
       "description": "Rotas que interagem com a tabela de Pedido "
-    },
-    {
-      "name": "ProductOrder",
-      "description": "Rotas que interagem com a tabela de ProdutoPedido "
     }
   ],
   "paths": {
@@ -272,7 +268,10 @@
                     "name": "Produto 00",
                     "imageUrl": "https://images.unsplash.com/photo-1579762715118-a6f1d4b934f1?fit=crop&w=331&q=80",
                     "price": 25.5,
-                    "userId": 1
+                    "user": {
+                      "id": "24da3d29-3a8e-4269-a516-31fb478e3e04",
+                      "name": "Jorge Abreu"
+                    }
                   }
                 }
               }
@@ -329,14 +328,15 @@
                 },
                 "examples": {
                   "product": {
-                    "value": [
-                      {
-                        "name": "Produto 00",
-                        "imageUrl": "https://images.unsplash.com/photo-1579762715118-a6f1d4b934f1?fit=crop&w=331&q=80",
-                        "price": 25.5,
-                        "userId": 1
+                    "value": {
+                      "name": "Produto 00",
+                      "imageUrl": "https://images.unsplash.com/photo-1579762715118-a6f1d4b934f1?fit=crop&w=331&q=80",
+                      "price": 25.5,
+                      "user": {
+                        "id": "24da3d29-3a8e-4269-a516-31fb478e3e04",
+                        "name": "Jorge Abreu"
                       }
-                    ]
+                    }
                   }
                 }
               }
@@ -443,6 +443,201 @@
           }
         }
       }
+    },
+    "/orders": {
+      "get": {
+        "tags": ["Order"],
+        "summary": "Listagem de produtos",
+        "description": "Essa rota será responsável por listar produtos.",
+        "security": [{ "bearerAuth": [] }],
+        "responses": {
+          "401": {
+            "description": "Token não fornecido."
+          },
+          "500": {
+            "description": "Erro inesperado!"
+          },
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "$ref": "#/components/schemas/Order"
+                  }
+                },
+                "examples": {
+                  "product": {
+                    "value": {
+                      "name": "Produto 00",
+                      "imageUrl": "https://images.unsplash.com/photo-1579762715118-a6f1d4b934f1?fit=crop&w=331&q=80",
+                      "price": 25.5,
+                      "user": {
+                        "id": "24da3d29-3a8e-4269-a516-31fb478e3e04",
+                        "name": "Jorge Abreu"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/register-order": {
+      "post": {
+        "tags": ["Order"],
+        "summary": "Cadastro de produto",
+        "description": "Essa rota será responsável por realizar o cadastro de produto.",
+        "security": [{ "bearerAuth": [] }],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "$ref": "#/components/schemas/Order"
+              },
+              "examples": {
+                "product": {
+                  "value": {
+                    "name": "Produto 00",
+                    "imageUrl": "https://images.unsplash.com/photo-1579762715118-a6f1d4b934f1?fit=crop&w=331&q=80",
+                    "price": 25.5,
+                    "user": {
+                      "id": "24da3d29-3a8e-4269-a516-31fb478e3e04",
+                      "name": "Jorge Abreu"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "401": {
+            "description": "Token não fornecido."
+          },
+          "400": {
+            "description": "Os dados enviados são incorretos!"
+          },
+          "500": {
+            "description": "Erro inesperado!"
+          },
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "$ref": "#/components/schemas/Success"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/edit-order/:id": {
+      "put": {
+        "tags": ["Order"],
+        "summary": "Edita um produto",
+        "description": "Essa rota será responsável por editar um produto.",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID do produto",
+            "required": true,
+            "type": "integer",
+            "format": "int64"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "$ref": "#/components/schemas/Order"
+              },
+              "examples": {
+                "product": {
+                  "value": {
+                    "name": "Produto 01",
+                    "imageUrl": "https://images.unsplash.com/photo-1579762715118-a6f1d4b934f1?fit=crop&w=331&q=80",
+                    "price": 20.5
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "400": {
+            "description": "Os dados enviados são incorretos!"
+          },
+          "401": {
+            "description": "Token não fornecido."
+          },
+          "500": {
+            "description": "Erro inesperado!"
+          },
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "$ref": "#/components/schemas/Success"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/delete-order/:id": {
+      "delete": {
+        "tags": ["Order"],
+        "summary": "Deleta um produto",
+        "description": "Essa rota será responsável por deletar um produto.",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID do produto",
+            "required": true,
+            "type": "integer",
+            "format": "int64"
+          }
+        ],
+        "responses": {
+          "400": {
+            "description": "Os dados enviados são incorretos!"
+          },
+          "401": {
+            "description": "Token não fornecido."
+          },
+          "500": {
+            "description": "Erro inesperado!"
+          },
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "$ref": "#/components/schemas/Success"
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {
@@ -450,6 +645,9 @@
       "User": {
         "type": "object",
         "properties": {
+          "id": {
+            "type": "string"
+          },
           "name": {
             "type": "string"
           },
@@ -464,6 +662,9 @@
       "Product": {
         "type": "object",
         "properties": {
+          "id": {
+            "type": "string"
+          },
           "name": {
             "type": "string"
           },
@@ -473,8 +674,56 @@
           "price": {
             "type": "number"
           },
-          "userId": {
+          "user": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "name": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      },
+      "Order": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "date": {
+            "type": "string"
+          },
+          "status": {
             "type": "number"
+          },
+          "products": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "imageUrl": {
+                  "type": "string"
+                },
+                "type": {
+                  "type": "number"
+                },
+                "price": {
+                  "type": "number"
+                },
+                "quantity": {
+                  "type": "number"
+                }
+              }
+            }
           }
         }
       },

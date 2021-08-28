@@ -54,37 +54,41 @@ export class ProductController {
   async index(req: Request, res: Response) {
     const db = await pool.connect();
 
-    const { userId } = req.body;
-
     try {
-      if (userId) {
-        db.query(
-          'SELECT * FROM tb_product WHERE tb_user_id = $1;',
-          [userId],
-          (error, result) => {
-            if (error) {
-              console.error(error);
-              return res.status(500).json({ message: 'Erro inesperado!' });
-            }
+      db.query(
+        `SELECT p.id, p.name, p.image_url, p.price,
+          u.id as user_id, u.name as user_name
+          FROM tb_product as p INNER JOIN tb_user as u
+          ON p.tb_user_id = u.id;`,
+        [],
+        (error, result) => {
+          if (error) {
+            console.error(error);
+            return res.status(500).json({ message: 'Erro inesperado!' });
+          }
 
-            if (result.rowCount === 0) {
-              console.error(error);
-              return res
-                .status(404)
-                .json({ message: 'Produtos não encontrados!' });
-            }
+          if (result.rowCount === 0) {
+            console.error(error);
+            return res
+              .status(404)
+              .json({ message: 'Produtos não encontrados!' });
+          }
 
-            const data = (result.rows as any[]).map((user) => {
-              return {
-                name: user.name,
-                id: user.id,
-                email: user.email,
-              };
-            });
-            res.status(200).json(data);
-          },
-        );
-      }
+          const data = (result.rows as any[]).map((product) => {
+            return {
+              id: product.id,
+              name: product.name,
+              imageUrl: product.image_url,
+              price: Number(product.price) || undefined,
+              user: {
+                id: product.user_id,
+                name: product.user_name,
+              },
+            };
+          });
+          res.status(200).json(data);
+        },
+      );
     } catch (error) {
       console.error(error);
       return res.status(500).json({ message: 'Erro inesperado!' });

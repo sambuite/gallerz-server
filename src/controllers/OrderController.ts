@@ -9,7 +9,11 @@ export class OrderController {
     const { userId, status, products } = req.body;
 
     try {
-      if (!userId || !status || !products.length)
+      if (
+        !userId ||
+        (typeof status !== 'number' && status < 0) ||
+        !products.length
+      )
         return res
           .status(400)
           .json({ error: 'Os dados enviados são incorretos!' });
@@ -112,16 +116,42 @@ export class OrderController {
               console.error(error);
               return res.status(500).json({ message: 'Erro inesperado!' });
             }
-            console.log('RESULT2', result.rows);
 
-            const data = (result.rows as any[]).map((order) => {
-              return {
-                id: order.id,
-                date: order.date,
-                status: order.status,
-              };
+            const data = (result.rows as any[]).map((order) => ({
+              id: order.order_id,
+              date: order.order_date,
+              status: order.order_status,
+              products: [
+                {
+                  id: order.product_id,
+                  name: order.product_name,
+                  imageUrl: order.product_image_url,
+                  type: order.order_product_type,
+                  price: Number(order.order_product_type),
+                  quantity: Number(order.order_product_quantity),
+                },
+              ],
+            }));
+
+            const output = [];
+
+            data.forEach(function (item) {
+              const existing = output.filter(function (v, i) {
+                return v.id == item.id;
+              });
+              if (existing.length) {
+                const existingIndex = output.indexOf(existing[0]);
+                output[existingIndex].products = output[
+                  existingIndex
+                ].products.concat(item.products);
+              } else {
+                if (typeof item.products == 'string')
+                  item.products = [item.products];
+                output.push(item);
+              }
             });
-            res.status(200).json({ data: result.rows });
+
+            res.status(200).json(output);
           },
         );
       }
